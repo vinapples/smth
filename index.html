@@ -2,404 +2,201 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ponyo Scrapbook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scrapbook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet">
   <style>
-    /* Reset & base */
-    * {
-      box-sizing: border-box;
-    }
-    body, html {
-      margin: 0; padding: 0; height: 100vh; overflow: hidden;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #90cdf4, #2a4365);
-      color: #fff;
-      user-select: none;
-    }
-    #app {
-      height: 100vh;
-      width: 100vw;
-      position: relative;
+    body {
+      margin: 0;
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(to bottom, #a5d8ff, #6ec1e4);
+      color: #333;
       overflow: hidden;
     }
     .page {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
       display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: linear-gradient(to bottom, #90cdf4, #2a4365);
-      text-align: center;
-      transition: opacity 0.6s ease;
+      padding: 2rem;
     }
-    .page.active {
-      display: flex;
-      opacity: 1;
-      z-index: 10;
+    .active {
+      display: block;
     }
-    .page.hidden {
-      opacity: 0;
-      z-index: 1;
-    }
-
-    /* Cover page */
-    #cover input {
-      padding: 10px 15px;
-      font-size: 1.2rem;
-      border-radius: 8px;
-      border: none;
-      text-align: center;
-      width: 140px;
-      margin-bottom: 15px;
-    }
-    #cover button {
-      padding: 10px 20px;
-      font-size: 1.2rem;
-      border-radius: 20px;
-      border: none;
-      background: #ecc94b;
-      color: #2d3748;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    #cover button:hover {
-      background: #d69e2e;
-    }
-    #cover .hint {
-      margin-top: 15px;
-      font-size: 0.9rem;
-      font-style: italic;
-      color: #f6e05e;
-      user-select: text;
-    }
-    #cover .error {
-      color: #fc8181;
-      font-weight: 600;
-      margin-top: 8px;
-    }
-
-    /* Photo page */
-    #photo h2 {
-      font-size: 2.8rem;
-      font-weight: 700;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px #1a202c99;
-    }
-    #photo p {
-      max-width: 600px;
-      font-size: 1.3rem;
-      line-height: 1.5;
-      margin-bottom: 40px;
-      text-shadow: 1px 1px 3px #1a202caa;
-    }
-    #photo button {
-      padding: 12px 30px;
-      font-size: 1.2rem;
-      border-radius: 30px;
-      border: none;
-      background: #ecc94b;
-      color: #2d3748;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-      transition: background 0.3s ease;
-    }
-    #photo button:hover {
-      background: #d69e2e;
-    }
-
-    /* Form page */
-    #form input, #form textarea {
-      width: 280px;
-      max-width: 90vw;
-      margin-bottom: 15px;
-      border-radius: 12px;
-      border: none;
-      padding: 12px 15px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #2d3748;
-      resize: none;
-    }
-    #form textarea {
-      height: 120px;
-    }
-    #form button {
-      margin-top: 15px;
-      padding: 12px 30px;
-      font-size: 1.2rem;
-      border-radius: 30px;
-      border: none;
-      background: #ecc94b;
-      color: #2d3748;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    #form button:hover {
-      background: #d69e2e;
-    }
-    #form .error {
-      color: #fc8181;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    /* Message page */
-    #messages {
-      width: 100%;
-      max-width: 700px;
-      max-height: 80vh;
-      overflow-y: auto;
-      padding: 0 10px;
-    }
-    .msg-card {
-      background: #fefcbf;
-      color: #2d3748;
-      border-radius: 20px;
-      padding: 15px 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-      text-align: left;
-      cursor: default;
-      user-select: text;
-    }
-    .msg-card strong {
-      font-weight: 700;
-    }
-    .msg-card iframe {
-      margin-top: 10px;
-      border-radius: 12px;
-      width: 100%;
-      height: 200px;
-      border: none;
-    }
-
-    /* Bubble animation */
     .bubble {
       position: absolute;
+      background: rgba(255, 255, 255, 0.5);
       border-radius: 50%;
-      background: rgba(255 255 255 / 0.3);
-      animation-name: rise;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-      pointer-events: none;
-      filter: drop-shadow(0 0 2px rgba(255 255 255 / 0.7));
+      animation: floatUp 10s linear infinite;
     }
-    @keyframes rise {
-      0% {
-        transform: translateY(0) scale(1);
-        opacity: 0.3;
+    @keyframes floatUp {
+      from {
+        transform: translateY(100vh);
+        opacity: 1;
       }
-      100% {
-        transform: translateY(-110vh) scale(1.2);
+      to {
+        transform: translateY(-100vh);
         opacity: 0;
       }
+    }
+    .message-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1rem 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background: #0284c7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div id="app">
-    <!-- Cover Page -->
-    <section id="cover" class="page active">
-      <h1 style="font-size:3rem; font-weight:800; margin-bottom:20px; user-select:text;">Ponyo Scrapbook</h1>
-      <input id="passcode-input" type="password" placeholder="Enter Passcode" autocomplete="off" />
-      <button id="unlock-btn">Unlock</button>
-      <div class="error" id="pass-error"></div>
-      <div class="hint">Hint: bulan bulan pusingnya agit</div>
-    </section>
 
-    <!-- Photo Page -->
-    <section id="photo" class="page">
-      <h2>Dear Sahabatku,</h2>
-      <p>
-        Like the waves that endlessly kiss the shore, our friendship flows with endless warmth and joy. 
-        Just like Ponyo’s adventurous spirit, may we always find wonder in every moment we share.
-      </p>
-      <button id="photo-next-btn">Next</button>
-    </section>
+<audio autoplay loop>
+  <source src="https://dl.sndup.net/6g6m/Ocean%20Eyes%20-%20Billie%20Eilish%20(Piano%20Version).mp3" type="audio/mpeg">
+</audio>
 
-    <!-- Form Page -->
-    <section id="form" class="page">
-      <h2>Send a Message</h2>
-      <div class="error" id="form-error"></div>
-      <input id="to-input" type="text" placeholder="To (your friend’s name)" />
-      <textarea id="message-input" placeholder="Message"></textarea>
-      <input id="from-input" type="text" placeholder="From (your name)" />
-      <input id="song-input" type="url" placeholder="Song Link (YouTube, optional)" />
-      <button id="form-next-btn">Next</button>
-    </section>
+<div class="bubble" style="width:40px; height:40px; left:10%; animation-delay:0s;"></div>
+<div class="bubble" style="width:60px; height:60px; left:30%; animation-delay:2s;"></div>
+<div class="bubble" style="width:30px; height:30px; left:50%; animation-delay:4s;"></div>
+<div class="bubble" style="width:50px; height:50px; left:70%; animation-delay:1s;"></div>
+<div class="bubble" style="width:40px; height:40px; left:90%; animation-delay:3s;"></div>
 
-    <!-- Messages Page -->
-    <section id="messages" class="page">
-      <h2>Messages For You</h2>
-      <div id="messages-list"></div>
-    </section>
-  </div>
+<div id="cover" class="page active">
+  <h1>Hi, Love 💙</h1>
+  <p>clue : bulan pusingnya Agit~</p>
+  <input type="password" id="passcode" placeholder="Kode rahasia" />
+  <button onclick="checkPasscode()">Unlock</button>
+</div>
 
-  <!-- Background bubbles container -->
-  <div id="bubbles-container"></div>
+<div id="photo" class="page">
+  <h2>Kenangan Kita</h2>
+  <p>📸 [tempel foto-foto gemes kalian di sini nanti ya]</p>
+  <button onclick="goToPage('form')">Next</button>
+</div>
 
-  <!-- Audio Player -->
-  <iframe id="audio-player" width="0" height="0" src="https://www.youtube.com/embed/p7f72y9a5pE?autoplay=1&loop=1&playlist=p7f72y9a5pE&mute=1" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+<div id="form" class="page">
+  <h2>Send a Message</h2>
+  <input type="text" id="to" placeholder="To" />
+  <textarea id="message" rows="4" placeholder="Message"></textarea>
+  <input type="text" id="from" placeholder="From" />
+  <input type="text" id="song" placeholder="Song (YouTube link, optional)" />
+  <button onclick="submitMessage()">Send</button>
+  <button onclick="goToPage('messages')">See Messages</button>
+</div>
 
-  <script>
-    // State
-    let currentPageIndex = 0;
-    const pages = ['cover', 'photo', 'form', 'messages'];
+<div id="messages" class="page">
+  <h2>Messages For You ✨</h2>
+  <div id="messageList"></div>
+  <button onclick="goToPage('cover')">Back to Cover</button>
+</div>
 
-    // Elements
-    const passInput = document.getElementById('passcode-input');
-    const unlockBtn = document.getElementById('unlock-btn');
-    const passError = document.getElementById('pass-error');
+<script>
+  function goToPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
 
-    const photoNextBtn = document.getElementById('photo-next-btn');
+  function checkPasscode() {
+    const code = document.getElementById('passcode').value;
+    if (code === "06") {
+      goToPage('photo');
+    } else {
+      alert("Salah kode sayangg 😜");
+    }
+  }
 
-    const formNextBtn = document.getElementById('form-next-btn');
-    const formError = document.getElementById('form-error');
-    const toInput = document.getElementById('to-input');
-    const messageInput = document.getElementById('message-input');
-    const fromInput = document.getElementById('from-input');
-    const songInput = document.getElementById('song-input');
+  function submitMessage() {
+    const to = document.getElementById("to").value.trim();
+    const message = document.getElementById("message").value.trim();
+    const from = document.getElementById("from").value.trim();
+    const song = document.getElementById("song").value.trim();
 
-    const messagesList = document.getElementById('messages-list');
+    if (to && message && from) {
+      const messages = JSON.parse(localStorage.getItem("ponyo_messages") || "[]");
+      messages.push({ to, message, from, song });
+      localStorage.setItem("ponyo_messages", JSON.stringify(messages));
+      alert("Pesan terkirim 💌");
+      document.getElementById("to").value = "";
+      document.getElementById("message").value = "";
+      document.getElementById("from").value = "";
+      document.getElementById("song").value = "";
+    } else {
+      alert("Lengkapi semua kolom ya!");
+    }
+  }
 
-    // Passcode unlock
-    unlockBtn.addEventListener('click', () => {
-      const code = passInput.value.trim();
-      if (code === '06') {
-        passError.textContent = '';
-        goToPage(1);
-      } else {
-        passError.textContent = 'Wrong passcode, try again!';
-      }
+  function renderMessages() {
+    const list = document.getElementById("messageList");
+    list.innerHTML = "";
+    const messages = JSON.parse(localStorage.getItem("ponyo_messages") || "[]");
+    messages.forEach((msg) => {
+      const div = document.createElement("div");
+      div.className = "message-card";
+      div.innerHTML = `
+        <strong>To: ${msg.to}</strong><br/>
+        <p>${msg.message}</p>
+        <em>— ${msg.from}</em><br/>
+        ${msg.song ? `<a href="${msg.song}" target="_blank">🎵 Listen</a>` : ""}
+      `;
+      list.appendChild(div);
     });
+  }
 
-    // Photo next
-    photoNextBtn.addEventListener('click', () => {
-      goToPage(2);
-    });
-
-    // Form next with validation
-    formNextBtn.addEventListener('click', () => {
-      if (!toInput.value.trim() || !messageInput.value.trim() || !fromInput.value.trim()) {
-        formError.textContent = 'Please fill all required fields (To, Message, From).';
-        return;
-      }
-      formError.textContent = '';
-
-      // Save message locally (or you can expand with backend later)
-      const msgData = {
-        to: toInput.value.trim(),
-        message: messageInput.value.trim(),
-        from: fromInput.value.trim(),
-        song: songInput.value.trim()
-      };
-      saveMessage(msgData);
-      clearForm();
-      goToPage(3);
-      renderMessages();
-    });
-
-    // Change page function
-    function goToPage(index) {
-      currentPageIndex = index;
-      pages.forEach((id, i) => {
-        const el = document.getElementById(id);
-        if (i === index) {
-          el.classList.add('active');
-          el.classList.remove('hidden');
-        } else {
-          el.classList.remove('active');
-          el.classList.add('hidden');
-        }
-      });
+  const defaultMessages = [
+    {
+      to: "Afifa",
+      message: `hey cewe happy graduation (⁠≧⁠▽⁠≦⁠)! PLEASE MASUK SMAN 2 AJAA YAKK PIPPP!!! selamat kamuu suda menyelesaikan Junior High School, CONGRATS FOR YOUUY!! tolong apip ntar jangan judes yak sm orang imut sepertiku, apip pasti nanti aku bakal kangen banget sama kamu (kangen mam di rumah apip wlee). sehatt selaluu yaa apipp & keluarga! i lovyuuu somay (JANGANN GAMONNN SAMA ARMANN)`,
+      from: "You",
+      song: ""
+    },
+    {
+      to: "Indana",
+      message: `HEYY CEWE GANTENGG, happy graduation Phi! semoga nanti di sma kamu dapet temennn yangg baikk!! omg pasti aku bakal kangen digambarin sama kamu, jangan asing plss.. NANTIII KASII KITA THR LAGII YAA (aku mau BMW 1 ajaa gapapaa kokkk)!! take care of you cewe gantengg, i love you sooo muchhh.`,
+      from: "You",
+      song: ""
+    },
+    {
+      to: "Karenia",
+      message: `hey KAYENNNN, HAPPYYY GRADUATION sist! kamu sudah menyelesaikan smp dengan baik ✅ AKU PASTIII KANGEN PULANG BARENGGG HUHUHU, KEYENN PLEASEEE JANGAN ASINGG.. jangann canggung juga, jangan lupain kita.. aku sangat sayang sama kayen, i love you so much my bestie.`,
+      from: "You",
+      song: ""
+    },
+    {
+      to: "Patma",
+      message: `sorri gakenal. JUST KIDDING BUB, happy graduation, ok, y. aduh bingung mw bilang apa 😭, pokonya timakaci suda menemani aku selama 3 tahun, i love you so much.`,
+      from: "You",
+      song: ""
+    },
+    {
+      to: "Sintiya",
+      message: `OMG KETUA KUUU, happy graduation ketos hebat! jangan terlalu ngeforsir tubuh kamu yaa, semangatt di sekolah baru!!hhh sana nonton aja sama MANTAN. ok y bye. i love you so much. iniii buatt pesannyaa. ituu pesannya.`,
+      from: "You",
+      song: ""
     }
+  ];
 
-    // Save messages in localStorage
-    function saveMessage(msg) {
-      const existing = JSON.parse(localStorage.getItem('ponyo_messages') || '[]');
-      existing.push(msg);
-      localStorage.setItem('ponyo_messages', JSON.stringify(existing));
+  function loadMessages() {
+    const stored = localStorage.getItem("ponyo_messages");
+    if (!stored) {
+      localStorage.setItem("ponyo_messages", JSON.stringify(defaultMessages));
     }
-    // Render messages
-    function renderMessages() {
-      const msgs = JSON.parse(localStorage.getItem('ponyo_messages') || '[]');
-      if (msgs.length === 0) {
-        messagesList.innerHTML = '<p>No messages yet. Send one!</p>';
-        return;
-      }
-      messagesList.innerHTML = '';
-      msgs.forEach(({to, message, from, song}, i) => {
-        const card = document.createElement('div');
-        card.className = 'msg-card';
-        card.innerHTML = `
-          <strong>To: ${escapeHtml(to)}</strong><br/>
-          <p>${escapeHtml(message)}</p>
-          <em>From: ${escapeHtml(from)}</em>
-          ${song ? `<iframe src="${getEmbedUrl(song)}" allow="autoplay" allowfullscreen></iframe>` : ''}
-        `;
-        messagesList.appendChild(card);
-      });
-    }
+  }
 
-    // Clear form inputs
-    function clearForm() {
-      toInput.value = '';
-      messageInput.value = '';
-      fromInput.value = '';
-      songInput.value = '';
-    }
+  loadMessages();
+  renderMessages();
+</script>
 
-    // Escape HTML to avoid injection
-    function escapeHtml(text) {
-      return text.replace(/[&<>"']/g, function(m) {
-        return ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
-        })[m];
-      });
-    }
-
-    // Convert YouTube URL to embed URL
-    function getEmbedUrl(url) {
-      try {
-        const videoId = url.split('v=')[1]?.split('&')[0];
-        if (videoId) return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
-      } catch {
-        return '';
-      }
-      return '';
-    }
-
-    // Bubble animation
-    const bubblesContainer = document.getElementById('bubbles-container');
-    function createBubble() {
-      const bubble = document.createElement('div');
-      bubble.classList.add('bubble');
-      const size = Math.random() * 25 + 10;
-      bubble.style.width = size + 'px';
-      bubble.style.height = size + 'px';
-      bubble.style.left = Math.random() * window.innerWidth + 'px';
-      bubble.style.bottom = '-30px';
-      bubble.style.animationDuration = (Math.random() * 8 + 6) + 's';
-      bubblesContainer.appendChild(bubble);
-
-      setTimeout(() => {
-        bubble.remove();
-      }, 14000);
-    }
-    setInterval(createBubble, 700);
-
-    // Init
-    renderMessages();
-
-  </script>
 </body>
 </html>
